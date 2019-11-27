@@ -10,7 +10,7 @@ Convert your Yup schema to a Swagger schema
 
 ## Please note:
 
-To benefit from the full features of this package, please use the following fork of [Yup][https://github.com/tecfu/yup]. 
+To benefit from the full features of this package, please use the following fork of [Yup]( https://github.com/tecfu/yup ). 
 
 ```sh
 npm i --save git://github.com/tecfu/yup#build
