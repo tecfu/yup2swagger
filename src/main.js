@@ -31,10 +31,11 @@ module.exports.parse = (schema, options) => {
   }
     
   //get swagger title from yup schema
-  let title = (schema.describe().meta.title) ? schema.describe().meta.title : null
+  const sd = schema.describe()
+  let title = (sd.meta && sd.meta.title) ? sd.meta.title : null
 
   //get swagger description from yup schema
-  let description = (schema.describe().meta.description) ? schema.describe().meta.description : null
+  let description = (sd.meta && sd.meta.description) ? sd.meta.description : null
   
   //get swagger properties from yup schema fields
   let props = []
