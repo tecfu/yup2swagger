@@ -155,7 +155,9 @@ const getProps = (name, schema, config) => {
   result.type = type
   if (format)  result.format = format
   if (nullable)  result.nullable = nullable
-  if (_default)  result.default = _default
+  if (_default)  {
+    result.default = (typeof _default === 'function') ? _default() : _default
+  }
   if (miscAttrs.length) miscAttrs.forEach( arr => {
     result[arr[0]] = arr[1]
   })
