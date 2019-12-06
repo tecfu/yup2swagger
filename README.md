@@ -1,6 +1,6 @@
-# yup2swagger
+# yup-to-swagger
 
-[![Build Status](https://travis-ci.org/tecfu/yup2swagger.svg?branch=master)](https://travis-ci.org/tecfu/yup2swagger) [![NPM version](https://badge.fury.io/js/yup2swagger.svg)](http://badge.fury.io/js/yup2swagger)
+[![Build Status](https://travis-ci.org/tecfu/yup-to-swagger.svg?branch=master)](https://travis-ci.org/tecfu/yup-to-swagger) [![NPM version](https://badge.fury.io/js/yup-to-swagger.svg)](http://badge.fury.io/js/yup-to-swagger)
 
 ---
 
@@ -12,7 +12,7 @@ Convert Yup to Swagger. Transforms a Yup schema into a Swagger/OpenAPI yaml defi
 
 ```js
 const yup = require('yup')
-const yup2swag = require('yup2swagger')
+const yup2swag = require('yup-to-swagger')
 
 const schema = yup
   .object()
