@@ -1,6 +1,6 @@
 {
   "name": "yup-to-swagger",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Convert your Yup schema to a Swagger schema",
   "main": "src/main.js",
   "scripts": {
