@@ -17,22 +17,23 @@
 const yup = require('yup')
 const yup2swag = require('./../src/main')
 
-const schema = yup.object().shape({
-  id: yup.number().integer().positive().required(),
-  name: yup.string(),
-  email: yup.string().email().required(),
-  created: yup.date().nullable(),
-  active: yup.boolean().default(true)
-})
+const schema = yup
+  .object()
+  .meta({ 
+    title: "Title of my definition",
+    description: "Description of my definition"
+  })
+  .shape({
+    id: yup.number().integer().positive().required(),
+    name: yup.string(),
+    email: yup.string().email().required(),
+    created: yup.date().nullable(),
+    active: yup.boolean().default(true)
+  })
 
-//let props = yup2swag.parse(schema, {
-//  extendedFormats: true
-//})
-//console.log(props)
-
-let swagger = yup2swag.convert(schema, {
-  extendedFormats: true
+let swaggerDefinition = yup2swag.parse(schema, {
+  extendedSwaggerFormats: true
 })
-console.log(swagger)
+console.log(swaggerDefinition)
 
 

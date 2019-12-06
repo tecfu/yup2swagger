@@ -1,7 +1,7 @@
 {
   "name": "yup-to-swagger",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "Convert your Yup schema to a Swagger schema",
   "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,6 +9,9 @@
   "author": "tecfu <help@tecfu.com>",
   "license": "MIT",
   "dependencies": {
+    "js-yaml": "^3.13.1"
+  },
+  "devDependencies": {
     "yup": "git+https://github.com/tecfu/yup.git#build"
   }
 }

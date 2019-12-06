@@ -1,7 +1,7 @@
 const defaults = {
   "customSwaggerTypes": null,
   "enforceYupSchema": true,
-  "extendedFormats": false,
+  "extendedSwaggerFormats": false,
   "extendedYupToSwaggerFormats": {
     "string": [
       "email",
@@ -15,6 +15,37 @@ const defaults = {
       "uuid",
       "video"
     ]
+  },
+  "outputFormat": "yaml",
+  "swagger": { 
+    "base": {
+      "swagger": "3.0",
+      "info": {
+        "description": null,
+        "version": null,
+        "title": null,
+        "license": {
+          "name": null,
+          "url": null
+        }
+      },
+      "host": null,
+      "basePath": null,
+      "tags": [],
+      "schemes": ["http"],
+      "paths": {},
+      "definitions": {},
+      "securityDefinitions": {}
+    },
+    "path": {
+      "tags": [],
+      "summary": null,
+      "description": null,
+      "operationId": null,
+      "consumes": ["application/json"],
+      "produces": ["application/json"],
+      "parameters": []
+    }
   },
   "yupConditionKeyToSwaggerFormat": {
     "$validatePassword": "password"

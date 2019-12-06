@@ -70,7 +70,6 @@ const findFirstMatchingConditionKey = (name, yupField) => {
 
 
 const getType = (yupField, config) => {
-  
   let searchArr = config.yupToSwaggerType[yupField._type]
   if(!searchArr) {
     throw new Error(`"${yupField._type}" type support must be added manually. At a minimum, add "null" as first array element.`)
@@ -85,7 +84,6 @@ const getType = (yupField, config) => {
 
 
 const getFormat = (yupField, config) => {
-
   let format
   let testResults = searchTests(
     yupField,
@@ -146,9 +144,7 @@ const getDefault = (yupField, config) => {
 
 
 const getProps = (name, schema, config) => {
-
   let result = {}
-
   let { type, yupType } = getType(schema, config)
   let format = getFormat(schema, config)
   let miscAttrs = getMiscAttributes(schema, config, yupType)
@@ -165,14 +161,15 @@ const getProps = (name, schema, config) => {
   })
 
   return  { [name] : result }
-
 }
 
 
-const propsToSwagger = (props) => {
+const propsToSwagger = (title, description, props) => {
 
   let output = {
     type: 'object',
+    title: title,
+    description: description,
     required: [],
     properties: {}
   }
