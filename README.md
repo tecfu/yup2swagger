@@ -11,7 +11,7 @@ Convert Yup to Swagger. Transforms a Yup schema into a Swagger/OpenAPI yaml defi
 ## Example
 
 ```js
-const yup = require('yup')
+const yup = require('@tecfu/yup')
 const yup2swag = require('yup-to-swagger')
 
 const schema = yup
@@ -89,7 +89,7 @@ console.log(swaggerDefinition)
 To benefit from the full features of this package, please use the following fork of [Yup]( https://github.com/tecfu/yup ). 
 
 ```sh
-npm i --save git://github.com/tecfu/yup#build
+npm i --save @tecfu/yup
 ```
 
 ## License

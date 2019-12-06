@@ -14,7 +14,7 @@
 //
 //console.log(swagger)
 
-const yup = require('yup')
+const yup = require('@tecfu/yup')
 const yup2swag = require('./../src/main')
 
 const schema = yup
