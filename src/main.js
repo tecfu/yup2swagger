@@ -1,56 +1,90 @@
-const {
-  defaults
-} = require(`${__dirname}/defaults.js`)
+const { defaults } = require(`${__dirname}/defaults.js`)
 
 const {
   isYupSchema,
   getProps,
   mergeObjects,
-  propsToSwagger
+  propsToSwagger,
+  extractFields
 } = require(`${__dirname}/schema_conversion.js`)
 
-const {
-  json_to_yaml 
-} = require(`${__dirname}/yaml_conversion.js`)
+const { json_to_yaml } = require(`${__dirname}/yaml_conversion.js`)
 
-module.exports.parse = (schema, options) => {
-  
-  //handle extended, custom formats
-  options.yupToSwaggerFormat = mergeObjects(
+/**
+ * Convert a Yup object schema into an OpenAPI 3 Schema Object
+ * (or YAML string).
+ *
+ * @param {object} schema - A Yup schema (object shape preferred)
+ * @param {object} [options]
+ * @param {boolean} [options.extendedSwaggerFormats=false]
+ * @param {object}  [options.customFormats]
+ * @param {'yaml'|'json'} [options.outputFormat='yaml']
+ * @returns {object|string}
+ */
+module.exports.parse = (schema, options = {}) => {
+  // Merge format maps
+  const formatMap = mergeObjects(
     {},
     defaults.yupToSwaggerFormat,
-    (options.extendedSwaggerFormats) ? defaults.extendedYupToSwaggerFormats : {},
-    (options.customFormats) ? options.customFormats : {}
+    options.extendedSwaggerFormats ? defaults.extendedYupToSwaggerFormats : {},
+    options.customFormats || {}
   )
-  const config = Object.assign({}, defaults, options)
+
+  const config = Object.assign({}, defaults, options, {
+    yupToSwaggerFormat: formatMap
+  })
 
   try {
     isYupSchema(schema, config)
   } catch (err) {
-    throw new Error(err)
+    throw new Error(err.message || err)
   }
-    
-  //get swagger title from yup schema
-  const sd = schema.describe()
-  let title = (sd.meta && sd.meta.title) ? sd.meta.title : null
 
-  //get swagger description from yup schema
-  let description = (sd.meta && sd.meta.description) ? sd.meta.description : null
-  
-  //get swagger properties from yup schema fields
-  let props = []
-  props = Object.entries(schema.fields).map(field => {
-    let name = field[0]
-    let schema = field[1]
-    if(!schema._type || typeof schema._type !== 'string'){
-      //Yup type is schema._type
-      throw new Error(`Cannot derive field _type in Yup schema, so 
-      cannot derive Yup type`)
+  // Prefer public describe() for title / description (modern Yup)
+  let title = null
+  let description = null
+  try {
+    const sd = typeof schema.describe === 'function' ? schema.describe() : null
+    if (sd && sd.meta) {
+      title = sd.meta.title || null
+      description = sd.meta.description || null
     }
-    return getProps(name, schema, config)
+  } catch (e) {
+    // ignore
+  }
+
+  // Fallback for older meta placement
+  if (!title && schema.meta && schema.meta.title) title = schema.meta.title
+  if (!description && schema.meta && schema.meta.description) {
+    description = schema.meta.description
+  }
+
+  const fieldEntries = extractFields(schema)
+  if (!fieldEntries.length) {
+    // Empty object schema is still valid
+    const empty = propsToSwagger(title, description, [])
+    return config.outputFormat === 'json' ? empty : json_to_yaml(empty)
+  }
+
+  const props = fieldEntries.map(([name, fieldSchema]) => {
+    // Guard against missing type info
+    if (!fieldSchema._type && !fieldSchema.type) {
+      // describe() objects use .type
+      if (typeof fieldSchema === 'object') {
+        fieldSchema.type = fieldSchema.type || 'mixed'
+      } else {
+        throw new Error(`Cannot derive type for field "${name}"`)
+      }
+    }
+    return getProps(name, fieldSchema, config)
   })
-  
+
   let output = propsToSwagger(title, description, props)
-  if(config.outputFormat === 'yaml') output = json_to_yaml(output)
+  if (config.outputFormat === 'yaml') {
+    output = json_to_yaml(output)
+  }
   return output
 }
+
+// Named export convenience
+module.exports.default = module.exports.parse
