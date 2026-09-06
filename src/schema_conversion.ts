@@ -21,7 +21,7 @@ type YupLikeField = {
   _type?: string
   type?: string
   tests?: Array<{ name?: string; OPTIONS?: { name?: string; params?: Record<string, unknown> }; params?: Record<string, unknown> }>
-  _tests?: Array<{ name?: string; OPTIONS?: { name?: string; params?: Record<string, unknown> } }>
+  _tests?: Array<{ name?: string; OPTIONS?: { name?: string; params?: Record<string, unknown> }; params?: Record<string, unknown> }>
   _nullable?: boolean
   nullable?: boolean
   optional?: boolean
@@ -124,9 +124,12 @@ function searchTests(
         if (matchingTest.OPTIONS?.params) {
           const entries = Object.entries(matchingTest.OPTIONS.params)
           if (entries.length) value = entries[0][1]
-        } else if (matchingTest.params) {
-          const entries = Object.entries(matchingTest.params)
-          if (entries.length) value = entries[0][1]
+        } else {
+          const params = (matchingTest as { params?: Record<string, unknown> }).params
+          if (params) {
+            const entries = Object.entries(params)
+            if (entries.length) value = entries[0][1]
+          }
         }
         return [searchTerm, value] as [string, unknown]
       }
