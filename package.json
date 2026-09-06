@@ -1,11 +1,36 @@
 {
   "name": "yup-to-swagger",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Convert Yup schemas to OpenAPI 3 Schema Objects (Swagger/OpenAPI definitions)",
-  "main": "src/main.js",
+  "type": "module",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      },
+      "require": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      },
+      "default": "./dist/main.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
   "scripts": {
-    "test": "node --test test/tests.js",
-    "test:legacy": "node test/tests.js"
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && node --test test/tests.js",
+    "test:watch": "node --test --watch test/tests.js",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "yup",
@@ -13,7 +38,9 @@
     "swagger",
     "schema",
     "converter",
-    "validation"
+    "validation",
+    "typescript",
+    "esm"
   ],
   "author": "tecfu <help@tecfu.com>",
   "license": "MIT",
@@ -26,12 +53,15 @@
   },
   "homepage": "https://github.com/tecfu/yup2swagger#readme",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
     "yup": "^1.6.1"
   },
   "peerDependencies": {

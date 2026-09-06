@@ -1,29 +1,40 @@
-const defaults = {
+export interface YupToSwaggerFormatMap {
+  [yupType: string]: (string | null)[]
+}
+
+export interface YupToSwaggerTypeMap {
+  [yupType: string]: string[]
+}
+
+export interface YupToSwaggerConditionsMap {
+  [yupType: string]: Record<string, string>
+}
+
+export interface Defaults {
+  customSwaggerTypes: null | Record<string, unknown>
+  enforceYupSchema: boolean
+  extendedSwaggerFormats: boolean
+  extendedYupToSwaggerFormats: YupToSwaggerFormatMap
+  outputFormat: 'yaml' | 'json'
+  yupConditionKeyToSwaggerFormat: Record<string, string>
+  yupSchema: string[]
+  yupToSwaggerConditions: YupToSwaggerConditionsMap
+  yupToSwaggerFormat: YupToSwaggerFormatMap
+  yupToSwaggerType: YupToSwaggerTypeMap
+}
+
+export const defaults: Defaults = {
   customSwaggerTypes: null,
-  enforceYupSchema: false, // relaxed for official Yup 1.x (private fields differ)
+  enforceYupSchema: false,
   extendedSwaggerFormats: false,
   extendedYupToSwaggerFormats: {
-    string: [
-      'email',
-      'hostname',
-      'ipv4',
-      'ipv6',
-      'uri',
-      'url',
-      'uuid'
-    ]
+    string: ['email', 'hostname', 'ipv4', 'ipv6', 'uri', 'url', 'uuid']
   },
-  outputFormat: 'yaml', // 'yaml' | 'json'
+  outputFormat: 'yaml',
   yupConditionKeyToSwaggerFormat: {
     $validatePassword: 'password'
   },
-  // Kept for backward-compat checks; not strictly enforced on modern Yup
-  yupSchema: [
-    'fields',
-    'tests',
-    'transforms',
-    '_type'
-  ],
+  yupSchema: ['fields', 'tests', 'transforms', '_type'],
   yupToSwaggerConditions: {
     boolean: {
       required: 'required',
@@ -64,10 +75,6 @@ const defaults = {
     string: ['string'],
     date: ['string'],
     object: ['object'],
-    mixed: ['string'] // fallback
+    mixed: ['string']
   }
-}
-
-module.exports = {
-  defaults
 }
