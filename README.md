@@ -1,6 +1,7 @@
 # yup-to-swagger
 
 [![NPM version](https://badge.fury.io/js/yup-to-swagger.svg)](http://badge.fury.io/js/yup-to-swagger)
+[![CI](https://github.com/tecfu/yup2swagger/actions/workflows/ci.yml/badge.svg)](https://github.com/tecfu/yup2swagger/actions/workflows/ci.yml)
 
 Convert a [Yup](https://github.com/jquense/yup) object schema into an OpenAPI 3 Schema Object (JSON or YAML).
 
@@ -10,13 +11,73 @@ Written in **TypeScript** with full ESM support (`import` / `export`). Works wit
 
 ## Install
 
+### Library (project dependency)
+
 ```bash
 npm install yup-to-swagger yup
 ```
 
+### CLI (global)
+
+Install the CLI globally from the npm registry:
+
+```bash
+npm install -g yup-to-swagger
+```
+
+This provides the `yup2swagger` and `yup-to-swagger` commands on your `PATH`.
+
 Requires Node.js ≥ 18.
 
-## Usage
+You can also run it without a global install:
+
+```bash
+npx yup-to-swagger ./my-schema.js
+```
+
+---
+
+## CLI usage
+
+Point the CLI at a JS module that **default-exports** (or named-exports `schema`) a Yup object schema:
+
+```bash
+# YAML to stdout (default)
+yup2swagger ./schemas/user.js
+
+# JSON to a file
+yup2swagger ./schemas/user.js --format json --output openapi/user.json
+
+# Short flags + extended formats (email, uuid, url, …)
+yup2swagger ./schemas/user.js -f yaml -o user.yaml -e
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output <file>` | Write result to file (default: stdout) |
+| `-f, --format <fmt>` | `yaml` or `json` (default: `yaml`) |
+| `-e, --extended` | Enable extended string formats |
+| `-h, --help` | Show help |
+| `-v, --version` | Show version |
+
+Example schema module (`schemas/user.js`):
+
+```js
+import * as yup from 'yup'
+
+export default yup
+  .object()
+  .meta({ title: 'User', description: 'A user record' })
+  .shape({
+    id: yup.number().integer().positive().required(),
+    email: yup.string().email().required(),
+    name: yup.string()
+  })
+```
+
+---
+
+## Library usage
 
 ### ESM (`import`)
 
@@ -66,15 +127,13 @@ console.log(json)
 */
 ```
 
-### CommonJS (`require`)
+### CommonJS
 
-Because the package is published as ESM, use dynamic import or a bundler:
+Because the package is published as ESM, use dynamic import:
 
 ```js
 const { parse } = await import('yup-to-swagger')
 ```
-
-Or in projects that already use ESM loaders.
 
 ## API
 
@@ -82,22 +141,20 @@ Or in projects that already use ESM loaders.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `schema` | Yup schema | A Yup object schema (preferably built with `.shape()` / `.object()`) |
+| `schema` | Yup schema | A Yup object schema (`.object()` / `.shape()`) |
 | `options` | `ParseOptions` | Optional settings |
 
-**Returns:** OpenAPI Schema Object (`object`) when `outputFormat: 'json'`, otherwise a YAML `string`.
+**Returns:** OpenAPI Schema Object when `outputFormat: 'json'`, otherwise a YAML `string`.
 
 ### Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `outputFormat` | `'yaml' \| 'json'` | `'yaml'` | Output format |
-| `extendedSwaggerFormats` | `boolean` | `false` | Enable extra string formats (email, uuid, url, …) |
+| `extendedSwaggerFormats` | `boolean` | `false` | Extra string formats (email, uuid, url, …) |
 | `customFormats` | `object` | `{}` | Extra type → format maps |
 
 ### TypeScript
-
-Types are included:
 
 ```ts
 import { parse, type ParseOptions, type OpenApiObjectSchema } from 'yup-to-swagger'
@@ -109,6 +166,7 @@ import { parse, type ParseOptions, type OpenApiObjectSchema } from 'yup-to-swagg
 npm install
 npm run build    # compiles TypeScript → dist/
 npm test         # build + run tests
+npm run cli -- ./path/to/schema.js
 ```
 
 ## Limitations
