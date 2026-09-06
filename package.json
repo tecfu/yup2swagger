@@ -30,7 +30,8 @@
     "prepublishOnly": "npm run build",
     "test": "npm run build && node --test test/tests.js",
     "test:watch": "node --test --watch test/tests.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "cli": "npm run build && node dist/cli.js"
   },
   "keywords": [
     "yup",
@@ -66,5 +67,9 @@
   },
   "peerDependencies": {
     "yup": ">=0.32.0 || >=1.0.0"
+  },
+  "bin": {
+    "yup2swagger": "./dist/cli.js",
+    "yup-to-swagger": "./dist/cli.js"
   }
 }
