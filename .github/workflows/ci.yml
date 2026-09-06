@@ -10,6 +10,9 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Build & Test (Node ${{ matrix.node-version }})
@@ -30,12 +33,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm ci
 
       - name: Build (TypeScript → dist/)
         run: npm run build
@@ -43,7 +41,7 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Typecheck only
+      - name: Typecheck
         run: npx tsc --noEmit
 
       - name: Verify dist exports
