@@ -4,13 +4,7 @@
 
 Convert a [Yup](https://github.com/jquense/yup) object schema into an OpenAPI 3 Schema Object (JSON or YAML).
 
-> **0.1.0 modernization notes**
-> - Works with official Yup (0.32+ / 1.x). The old `@tecfu/yup` fork is no longer required.
-> - Fixed required-field detection.
-> - Updated to `js-yaml` v4.
-> - Prefer public `schema.describe()` when available.
-> - Basic Node test runner coverage added.
-> - Still focused on object schemas; nested objects/arrays and advanced conditionals have limited support.
+Written in **TypeScript** with full ESM support (`import` / `export`). Works with official Yup ≥ 0.32 / 1.x.
 
 ---
 
@@ -20,11 +14,16 @@ Convert a [Yup](https://github.com/jquense/yup) object schema into an OpenAPI 3 
 npm install yup-to-swagger yup
 ```
 
-## Example
+Requires Node.js ≥ 18.
 
-```js
-const yup = require('yup')
-const yup2swag = require('yup-to-swagger')
+## Usage
+
+### ESM (`import`)
+
+```ts
+import * as yup from 'yup'
+import { parse } from 'yup-to-swagger'
+// or: import parse from 'yup-to-swagger'
 
 const schema = yup
   .object()
@@ -41,11 +40,11 @@ const schema = yup
   })
 
 // YAML (default)
-const yaml = yup2swag.parse(schema, { extendedSwaggerFormats: true })
+const yaml = parse(schema, { extendedSwaggerFormats: true })
 console.log(yaml)
 
 // JSON
-const json = yup2swag.parse(schema, {
+const json = parse(schema, {
   extendedSwaggerFormats: true,
   outputFormat: 'json'
 })
@@ -67,7 +66,28 @@ console.log(json)
 */
 ```
 
-## Options
+### CommonJS (`require`)
+
+Because the package is published as ESM, use dynamic import or a bundler:
+
+```js
+const { parse } = await import('yup-to-swagger')
+```
+
+Or in projects that already use ESM loaders.
+
+## API
+
+### `parse(schema, options?)`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `schema` | Yup schema | A Yup object schema (preferably built with `.shape()` / `.object()`) |
+| `options` | `ParseOptions` | Optional settings |
+
+**Returns:** OpenAPI Schema Object (`object`) when `outputFormat: 'json'`, otherwise a YAML `string`.
+
+### Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -75,7 +95,23 @@ console.log(json)
 | `extendedSwaggerFormats` | `boolean` | `false` | Enable extra string formats (email, uuid, url, …) |
 | `customFormats` | `object` | `{}` | Extra type → format maps |
 
-## Limitations (current)
+### TypeScript
+
+Types are included:
+
+```ts
+import { parse, type ParseOptions, type OpenApiObjectSchema } from 'yup-to-swagger'
+```
+
+## Development
+
+```bash
+npm install
+npm run build    # compiles TypeScript → dist/
+npm test         # build + run tests
+```
+
+## Limitations
 
 - Best results with top-level object shapes.
 - Nested objects / arrays and `when` conditionals have only partial mapping.

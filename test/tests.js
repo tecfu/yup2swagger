@@ -1,11 +1,11 @@
 /**
- * Basic tests for yup-to-swagger (yup2swagger).
- * Uses Node's built-in test runner (node --test) and official yup.
+ * Tests for yup-to-swagger (TypeScript / ESM build).
+ * Run after `npm run build`.
  */
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-const yup = require('yup')
-const yup2swag = require('../src/main.js')
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
+import * as yup from 'yup'
+import { parse } from '../dist/main.js'
 
 describe('yup-to-swagger basic conversion', () => {
   it('converts a simple object schema to JSON OpenAPI Schema Object', () => {
@@ -23,11 +23,12 @@ describe('yup-to-swagger basic conversion', () => {
         active: yup.boolean().default(true)
       })
 
-    const result = yup2swag.parse(schema, {
+    const result = parse(schema, {
       extendedSwaggerFormats: true,
       outputFormat: 'json'
     })
 
+    assert.equal(typeof result, 'object')
     assert.equal(result.type, 'object')
     assert.equal(result.title, 'Title of my definition')
     assert.equal(result.description, 'Description of my definition')
@@ -46,7 +47,7 @@ describe('yup-to-swagger basic conversion', () => {
     const schema = yup.object({
       name: yup.string().required()
     })
-    const result = yup2swag.parse(schema)
+    const result = parse(schema)
     assert.equal(typeof result, 'string')
     assert.ok(result.includes('type: object'))
     assert.ok(result.includes('name:'))
@@ -54,31 +55,14 @@ describe('yup-to-swagger basic conversion', () => {
 
   it('handles empty object schema', () => {
     const schema = yup.object({})
-    const result = yup2swag.parse(schema, { outputFormat: 'json' })
+    const result = parse(schema, { outputFormat: 'json' })
     assert.equal(result.type, 'object')
     assert.deepEqual(result.properties, {})
   })
-})
 
-// Allow running directly with `node test/tests.js` for quick smoke check
-if (require.main === module) {
-  const schema = yup
-    .object()
-    .meta({
-      title: 'Title of my definition',
-      description: 'Description of my definition'
-    })
-    .shape({
-      id: yup.number().integer().positive().required(),
-      name: yup.string(),
-      email: yup.string().email().required(),
-      created: yup.date().nullable(),
-      active: yup.boolean().default(true)
-    })
-
-  const swaggerDefinition = yup2swag.parse(schema, {
-    extendedSwaggerFormats: true,
-    outputFormat: 'json'
+  it('supports named import style usage', () => {
+    const schema = yup.object({ foo: yup.string() })
+    const result = parse(schema, { outputFormat: 'json' })
+    assert.equal(result.properties.foo.type, 'string')
   })
-  console.log(JSON.stringify(swaggerDefinition, null, 2))
-}
+})
